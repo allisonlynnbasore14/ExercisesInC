@@ -67,6 +67,31 @@ char itoc(int i) {
     return c;
 }
 
+/* multiply_digits: Multiplies two decimal digits, returns the total and carry.
+
+Stores the result in z.
+
+a: character '0' to '9'
+b: character '0' to '9'
+c: character '0' to '9'
+total: pointer to char
+carry: pointer to char
+*/
+void multiply_digits(char a, char b, char c, char *total, char *carry) {
+    int tempTotal;
+
+    tempTotal = (ctoi(a) * ctoi(b)) + ctoi(c);
+
+    if(tempTotal>=10){
+      *carry = itoc(tempTotal)[0];
+      *total = itoc(tempTotal)[1];
+    }else{
+      *carry = '0';
+      *total = itoc(tempTotal);
+    }
+}
+
+
 /* add_digits: Adds two decimal digits, returns the total and carry.
 
 For example, if a='5', b='6', and carry='1', the sum is 12, so
@@ -155,6 +180,84 @@ void print_bigint(BigInt big) {
     printf("%c", c);
 }
 
+/* multiply_digit_to_BigInt: Multiplies a BigInt with a single digit
+
+Stores the result in z.
+
+numerator: BigInt
+a: character digit
+z: empty buffer
+*/
+
+void multiply_digit_to_BigInt(BigInt numerator, char a, char carry_in, &total, &carry_out){
+  // add to total the value of multipling the numberator to the a digit + carry_in, also set carry_out
+  char semitotal, semicarryout;
+  int dx =1,dz=1;
+  char b, carry_in;
+
+  if(*numerator == '\0'){
+    b = '0';
+    dx = 0;
+  }else{
+    b =*x;
+  }
+
+  multiply_digits(a, b, carry_in, &semitotal, &semicarryout);
+
+  if (total == '0' && carry_out == '0') {
+      *z = '\0';
+      return;
+  }
+
+  *total = ctoi(semitotal)+ctoi(*carry_out);
+
+
+  // // otherwise store the digit we just computed
+  *z = total;
+  //
+  // // and make a recursive call to fill in the rest.
+  add_bigint(x+dx, a, semicarryout, z+dz);
+
+}
+
+/*  multiply_bigint: Multiplies a BigInt with a BigInt
+
+Stores the result in z.
+
+x: BigInt
+y: BigInt
+z: empty buffer
+*/
+
+void multiply_bigint(BigInt numerator, BigInt y, BigInt z) {
+    // Keep track of total and where in the denominator we are
+    char total;
+    int tensPlace = strlen(y)-1; // Biggest index down to ones place
+
+    int dy=0, dz=1;
+    char denom;
+
+    if (*y == '\0') {
+        denom = '0';
+        dy = 0;
+    }else{
+        denom = *y;
+    }
+
+    multiply_digit_to_BigInt(numerator, denom, carry_in, &total, &carry_out);
+    // if total and carry are 0, we're done
+    if (total == '0' && carry_out == '0') {
+        *z = '\0';
+        return;
+    }
+    // otherwise store the digit we just computed
+    *z = total;
+
+    // and make a recursive call to fill in the rest.
+    multiply_bigint(x, y+dy, z+dz);
+
+  }
+
 /* make_bigint: Creates and returns a BigInt.
 
 Caller is responsible for freeing.
@@ -215,11 +318,29 @@ void test_add_bigint() {
     }
 }
 
+void test_multiply_bigint() {
+    char *s = "1200";
+    char *t = "1000000000000000000000000000000000000000";
+    char *res = "1000000000000000000000000000000000001200";
+
+    BigInt big1 = make_bigint(s);
+    BigInt big2 = make_bigint(t);
+    BigInt big3 = malloc(100);
+	  multiply_bigint(big1, big2, big3);
+    //print_bigint(big3);
+    if (strcmp(big3, res) == 0) {
+        printf("multi_bigint passed\n");
+    } else {
+        printf("multi_bigint failed\n");
+    }
+}
+
 int main (int argc, char *argv[])
 {
     test_reverse_string();
     test_itoc();
     test_add_digits();
     test_add_bigint();
+    //test_multiply_bigint();
     return 0;
 }
