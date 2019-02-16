@@ -2,6 +2,27 @@
 #include <stdlib.h>
 #include <string.h>
 
+void strsplit(char *str, char sep, char*first, char*second){
+  // char *ret;
+  // ret = memchr(str, sep, strlen(str)); // location of seperation character
+
+  char *ret;
+  ret = strchr(str, sep);// pointer to first occerance of seperation character
+
+  int si = 0;
+  while(str[si]!=sep){
+    first[si] = str[si];
+    si++;
+  }
+  printf("%d\n", si);
+  while(str[si]!='\0'){
+    second[si] = str[si];
+    si++;
+  }
+
+}
+
+
 
 int endsWith(char *str, char *suffix){
   int lenSuff = strlen(suffix);
@@ -20,9 +41,14 @@ int endsWith(char *str, char *suffix){
 }
 
 int main(int argc, char *argv[]){
-  char *a = "TH";
-  char *b = "right";
-  int val = endsWith(a, b);
-  printf("%d\n", val);
+  char *a = "HellorWorld";
+  char s = 'r';
+  char *first =(char*)malloc(sizeof(char)*10);
+  char *second =(char*)malloc(sizeof(char)*10);
+
+  // int val = endsWith(a, b);
+  strsplit(a, s,  first, second);
+  printf("%s\n", first);
+  printf("%s\n", second);
   return 0;
 }
