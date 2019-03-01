@@ -54,12 +54,6 @@ static char *test2() {
     return NULL;
 }
 
-static char *test3() {
-    // int res = endswith("endswith", "offendswith");
-    // char *message = "test3 failed: endswith(\"offendswith\", \"swith\") should return 0";
-    // mu_assert(message, res == 0);
-    return NULL;
-}
 
 static char * testReadFunc() {
     mu_run_test(test1);
