@@ -82,7 +82,7 @@ double my_random_double()
 {
   int x;
   int mant;
-  int exp = 126;
+  int exp = 64;
   int mask = 1;
 
   union {
