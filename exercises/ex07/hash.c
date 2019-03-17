@@ -358,8 +358,22 @@ void print_map(Map *map)
 /* Adds a key-value pair to a map. */
 void map_add(Map *map, Hashable *key, Value *value)
 {
-    // Find the correct list in the map
-    //Add it to the list : *prepend(Hashable *key, Value *value, Node *rest)
+  int i;
+  // Find the right list to put it in
+  for (i=0; i<map->n; i++) {
+      if(map->lists[i]->key == key){
+        if (map->lists[i] == NULL) {
+            //Make new listnode
+            Node *head = make_node(key, value, NULL);
+        }else{
+          Node *current = map->lists[i];
+          while (current->next != NULL) {
+              current = current->next;
+          }//When it breaks we found the last one
+          current->next = prepend(key, value, current);
+        }
+      }
+  }
 }
 
 
@@ -418,13 +432,13 @@ int main ()
 
     printf("Start Tests 2\n");
     // run some test lookups
-    value = map_lookup(map, hashable1);
+    value = map_lookup(map, hashable1); //Should return first node's value
     print_lookup(value);
 
-    value = map_lookup(map, hashable2);
+    value = map_lookup(map, hashable2); //Should return first node's value
     print_lookup(value);
 
-    value = map_lookup(map, hashable3);
+    value = map_lookup(map, hashable3); //Should return null
     print_lookup(value);
 
     return 0;
