@@ -405,6 +405,7 @@ int main ()
     printf ("Map\n");
     print_map(map);
 
+    printf("Start Tests\n");
     // run some test lookups
     value = map_lookup(map, hashable1);
     print_lookup(value);
