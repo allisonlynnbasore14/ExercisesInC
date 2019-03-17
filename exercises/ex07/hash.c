@@ -359,21 +359,26 @@ void print_map(Map *map)
 void map_add(Map *map, Hashable *key, Value *value)
 {
   int i;
+  int found = 0;
   // Find the right list to put it in
   for (i=0; i<map->n; i++) {
+    if(map->lists[i] != NULL){
       if(map->lists[i]->key == key){
-        if (map->lists[i] == NULL) {
-            //Make new listnode
-            Node *head = make_node(key, value, NULL);
-        }else{
-          Node *current = map->lists[i];
-          while (current->next != NULL) {
-              current = current->next;
-          }//When it breaks we found the last one
-          current->next = prepend(key, value, current);
-        }
+        found = 1;
+        Node *current = map->lists[i];
+        while (current->next != NULL) {
+            current = current->next;
+        }//When it breaks we found the last one
+        current->next = prepend(key, value, current);
       }
+    }
   }
+  if (found != 1) {
+      //Make new listnode
+      printf("%s\n", "AT NOT FOUND");
+      Node *head = make_node(key, value, NULL);
+  }
+
 }
 
 
@@ -397,6 +402,10 @@ void print_lookup(Value *value)
 
 int main ()
 {
+
+    //QUESTION: Why is he putting two values at the same list with diffrent Hashes
+    //I.e. how are the buckets organized then?
+
     //Make three keys for three values
     Hashable *hashable1 = make_hashable_int (1);
     Hashable *hashable2 = make_hashable_string ("Apple");
