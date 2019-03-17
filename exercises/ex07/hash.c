@@ -306,8 +306,15 @@ Node *prepend(Hashable *key, Value *value, Node *rest)
 /* Looks up a key and returns the corresponding value, or NULL */
 Value *list_lookup(Node *list, Hashable *key)
 {
-    // FILL THIS IN!
-    return NULL;
+  Node *current = list;
+
+  while (current != NULL) {
+      if(equal_hashable(current->key,key)){
+        return current->value;
+      }
+      current = current->next;
+  }
+  return NULL;
 }
 
 
@@ -351,7 +358,8 @@ void print_map(Map *map)
 /* Adds a key-value pair to a map. */
 void map_add(Map *map, Hashable *key, Value *value)
 {
-    // FILL THIS IN!
+    // Find the correct list in the map
+    //Add it to the list : *prepend(Hashable *key, Value *value, Node *rest)
 }
 
 
@@ -359,6 +367,7 @@ void map_add(Map *map, Hashable *key, Value *value)
 Value *map_lookup(Map *map, Hashable *key)
 {
     // FILL THIS IN!
+    // list_lookup(Node *list, Hashable *key)
     return NULL;
 }
 
@@ -374,28 +383,30 @@ void print_lookup(Value *value)
 
 int main ()
 {
+    //Make three keys for three values
     Hashable *hashable1 = make_hashable_int (1);
     Hashable *hashable2 = make_hashable_string ("Apple");
     Hashable *hashable3 = make_hashable_int (2);
 
     // make a list by hand
     Value *value1 = make_int_value (17);
-    Node *node1 = make_node(hashable1, value1, NULL);
+    Node *node1 = make_node(hashable1, value1, NULL); //At the first key, putting a value of 17
     print_node (node1);
 
     Value *value2 = make_string_value ("Orange");
-    Node *list = prepend(hashable2, value2, node1);
+    Node *list = prepend(hashable2, value2, node1);  //At the second key, putting a value of Orange as appended to the first node
     print_list (list);
 
     // run some test lookups
+    printf("Start Tests 1\n");
     Value *value = list_lookup (list, hashable1);
-    print_lookup(value);
+    print_lookup(value); //Should return first node's value
 
     value = list_lookup (list, hashable2);
-    print_lookup(value);
+    print_lookup(value); //Should return second node's value
 
     value = list_lookup (list, hashable3);
-    print_lookup(value);
+    print_lookup(value); //Should return null
 
     // make a map
     Map *map = make_map(10);
@@ -405,7 +416,7 @@ int main ()
     printf ("Map\n");
     print_map(map);
 
-    printf("Start Tests\n");
+    printf("Start Tests 2\n");
     // run some test lookups
     value = map_lookup(map, hashable1);
     print_lookup(value);
