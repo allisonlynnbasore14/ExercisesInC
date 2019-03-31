@@ -354,31 +354,24 @@ void print_map(Map *map)
     }
 }
 
-
 /* Adds a key-value pair to a map. */
 void map_add(Map *map, Hashable *key, Value *value)
 {
-  int i;
-  int found = 0;
-  // Find the right list to put it in
-  for (i=0; i<map->n; i++) {
-    if(map->lists[i] != NULL){
-      if(map->lists[i]->key == key){
-        found = 1;
-        Node *current = map->lists[i];
-        while (current->next != NULL) {
-            current = current->next;
-        }//When it breaks we found the last one
-        current->next = prepend(key, value, current);
-      }
-    }
-  }
-  if (found != 1) {
-      //Make new listnode
-      printf("%s\n", "AT NOT FOUND");
-      Node *head = make_node(key, value, NULL);
-  }
+  int numOfItems = map->n;
+  int val = hash_hashable(key) % numOfItems; //Hash List Index
 
+  // Find the right list to put it in
+  if(map->lists[val] == NULL){
+    //Empty, add new
+    Node *newNode = make_node(key, value, NULL); //no other node to connect too
+    //Add to map
+    map->lists[val] = newNode;
+  }else{
+    // Not Empty, prepend
+    Node *appNode = prepend(key, value, map->lists[val]);
+    // Add to map
+    map->lists[val] = appNode;
+  }
 }
 
 
@@ -386,8 +379,10 @@ void map_add(Map *map, Hashable *key, Value *value)
 Value *map_lookup(Map *map, Hashable *key)
 {
     // FILL THIS IN!
-    // list_lookup(Node *list, Hashable *key)
-    return NULL;
+    int numOfItems = map->n;
+    int val = hash_hashable(key) % numOfItems; //Hash List Index
+    return(list_lookup(map->lists[val], key));
+
 }
 
 
