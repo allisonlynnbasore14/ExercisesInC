@@ -178,7 +178,11 @@ int hash_hashable(Hashable *hashable)
 */
 int equal_int (void *ip, void *jp)
 {
-    // FILL THIS IN!
+    int i = *(int*)ip;
+    int j = *(int*)jp;
+    if(i == j){
+      return 1;
+    }
     return 0;
 }
 
@@ -192,7 +196,11 @@ int equal_int (void *ip, void *jp)
 */
 int equal_string (void *s1, void *s2)
 {
-    // FILL THIS IN!
+    char** s1Val = (char**)s1;
+    char** s2Val = (char**)s2;
+    if(s1Val == s2Val){
+      return 1;
+    }
     return 0;
 }
 
@@ -207,7 +215,9 @@ int equal_string (void *s1, void *s2)
 */
 int equal_hashable(Hashable *h1, Hashable *h2)
 {
-    // FILL THIS IN!
+    if(h1->key == h2->key){
+      return 1;
+    }
     return 0;
 }
 
@@ -296,8 +306,15 @@ Node *prepend(Hashable *key, Value *value, Node *rest)
 /* Looks up a key and returns the corresponding value, or NULL */
 Value *list_lookup(Node *list, Hashable *key)
 {
-    // FILL THIS IN!
-    return NULL;
+  Node *current = list;
+
+  while (current != NULL) {
+      if(equal_hashable(current->key,key)){
+        return current->value;
+      }
+      current = current->next;
+  }
+  return NULL;
 }
 
 
@@ -337,11 +354,24 @@ void print_map(Map *map)
     }
 }
 
-
 /* Adds a key-value pair to a map. */
 void map_add(Map *map, Hashable *key, Value *value)
 {
-    // FILL THIS IN!
+  int numOfItems = map->n;
+  int val = hash_hashable(key) % numOfItems; //Hash List Index
+
+  // Find the right list to put it in
+  if(map->lists[val] == NULL){
+    //Empty, add new
+    Node *newNode = make_node(key, value, NULL); //no other node to connect too
+    //Add to map
+    map->lists[val] = newNode;
+  }else{
+    // Not Empty, prepend
+    Node *appNode = prepend(key, value, map->lists[val]);
+    // Add to map
+    map->lists[val] = appNode;
+  }
 }
 
 
@@ -349,7 +379,10 @@ void map_add(Map *map, Hashable *key, Value *value)
 Value *map_lookup(Map *map, Hashable *key)
 {
     // FILL THIS IN!
-    return NULL;
+    int numOfItems = map->n;
+    int val = hash_hashable(key) % numOfItems; //Hash List Index
+    return(list_lookup(map->lists[val], key));
+
 }
 
 
@@ -364,28 +397,34 @@ void print_lookup(Value *value)
 
 int main ()
 {
+
+    //QUESTION: Why is he putting two values at the same list with diffrent Hashes
+    //I.e. how are the buckets organized then?
+
+    //Make three keys for three values
     Hashable *hashable1 = make_hashable_int (1);
     Hashable *hashable2 = make_hashable_string ("Apple");
     Hashable *hashable3 = make_hashable_int (2);
 
     // make a list by hand
     Value *value1 = make_int_value (17);
-    Node *node1 = make_node(hashable1, value1, NULL);
+    Node *node1 = make_node(hashable1, value1, NULL); //At the first key, putting a value of 17
     print_node (node1);
 
     Value *value2 = make_string_value ("Orange");
-    Node *list = prepend(hashable2, value2, node1);
+    Node *list = prepend(hashable2, value2, node1);  //At the second key, putting a value of Orange as appended to the first node
     print_list (list);
 
     // run some test lookups
+    printf("Start Tests 1\n");
     Value *value = list_lookup (list, hashable1);
-    print_lookup(value);
+    print_lookup(value); //Should return first node's value
 
     value = list_lookup (list, hashable2);
-    print_lookup(value);
+    print_lookup(value); //Should return second node's value
 
     value = list_lookup (list, hashable3);
-    print_lookup(value);
+    print_lookup(value); //Should return null
 
     // make a map
     Map *map = make_map(10);
@@ -395,14 +434,15 @@ int main ()
     printf ("Map\n");
     print_map(map);
 
+    printf("Start Tests 2\n");
     // run some test lookups
-    value = map_lookup(map, hashable1);
+    value = map_lookup(map, hashable1); //Should return first node's value
     print_lookup(value);
 
-    value = map_lookup(map, hashable2);
+    value = map_lookup(map, hashable2); //Should return first node's value
     print_lookup(value);
 
-    value = map_lookup(map, hashable3);
+    value = map_lookup(map, hashable3); //Should return null
     print_lookup(value);
 
     return 0;
