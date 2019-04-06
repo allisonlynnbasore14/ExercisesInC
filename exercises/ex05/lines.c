@@ -40,7 +40,10 @@ x, y: coordinates
 
 returns: new Line; use free_line to free
 */
-// TODO: Write this function
+Line* make_line(*Point A, *Point B){
+    Line*l = {A, B};
+    return l;
+}
 
 /* Return string representation
 
@@ -59,7 +62,8 @@ char *line_to_string(Line *line) {
 line: Line
 */
 void free_line(Line *line) {
-    // Optional TODO: free embedded Points?
+    free(line->start);
+    free(line->end);
     free(line);
 }
 
@@ -97,7 +101,7 @@ Point *upper_right_rect(Rectangle *rect) {
     double y = rect->corner->y;
     Point *p = make_point(x + rect->width, y + rect->height);
     return p;
-}
+}ke
 
 void main (int argc, char *argv[]) {
     Point *lower_left = make_point(3.0, 4.0);

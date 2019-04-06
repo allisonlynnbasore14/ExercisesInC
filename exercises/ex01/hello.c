@@ -38,12 +38,6 @@ int main() {
     with 'movl' commands. The increase to the O2 optimization did not increase
     significantly.
     I believe the O2 optimization combined the x, 1, and y without having to
-<<<<<<< HEAD
     save them in seperate registers. Therefore, with the optimization it will
     take less space and time to calcuate and print y.
-=======
-    save them in separate registers. Therefore, with the optimization it will
-    take less space and time to calculate and print y.
-
->>>>>>> d4654b4b0aa7310238c473a4eee41ee48766c4fb
 */
