@@ -12,12 +12,26 @@ License: MIT License https://opensource.org/licenses/MIT
 #include <errno.h>
 #include <sys/time.h>
 #include <sys/types.h>
-#include <wait.h>
+#include <sys/wait.h>
+
+
+
+/*
+The parents and children have their own versions of global variables. The same was true for local variables.
+  I tested this by making a global variable and changing it in both the child and parent code.
+
+They do not have the same stack or heap space.
+  I tested this by modifing a pointer in both the child and parent and saw that a change in one did not change the other.
+
+
+*/
+
 
 
 // errno is an external global variable that contains
 // error information
 extern int errno;
+int testVar;
 
 
 // get_seconds returns the number of seconds since the
@@ -30,10 +44,13 @@ double get_seconds() {
 }
 
 
-void child_code(int i)
+void child_code(int i, int*p)
 {
     sleep(i);
+    testVar = 1;
     printf("Hello from child %d.\n", i);
+    *p = 25;//Write
+    printf("Child %d: %d %p\n", getpid(), *p, p);//Read
 }
 
 // main takes two parameters: argc is the number of command-line
@@ -45,6 +62,8 @@ int main(int argc, char *argv[])
     pid_t pid;
     double start, stop;
     int i, num_children;
+
+    int *p = (int*)malloc(sizeof(int));
 
     // the first command-line argument is the name of the executable.
     // if there is a second, it is the number of children to create.
@@ -72,13 +91,16 @@ int main(int argc, char *argv[])
 
         /* see if we're the parent or the child */
         if (pid == 0) {
-            child_code(i);
+            child_code(i, p);
             exit(i);
         }
     }
 
     /* parent continues */
+
     printf("Hello from the parent.\n");
+    *p = 15;//write
+    printf("Parent %d: %d %p\n", getpid(), *p, p);//read
 
     for (i=0; i<num_children; i++) {
         pid = wait(&status);
@@ -96,6 +118,7 @@ int main(int argc, char *argv[])
     // compute the elapsed time
     stop = get_seconds();
     printf("Elapsed time = %f seconds.\n", stop - start);
-
+    printf("%d\n", testVar);
     exit(0);
+
 }
