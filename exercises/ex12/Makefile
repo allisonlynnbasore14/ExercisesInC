@@ -5,6 +5,9 @@ counter: counter.c
 counter_mutex: counter_mutex.c
 	gcc -Wall -o counter_mutex counter_mutex.c -lpthread
 
+counter_array_mutex: counter_mutexAllison.c mutex.c
+	gcc -Wall -o counter_mutex_array counter_array_mutexAllison.c -lpthread
+
 barrier: barrier.c utils.c
 	gcc -Wall -std=c99 -o barrier barrier.c utils.c -lpthread
 
