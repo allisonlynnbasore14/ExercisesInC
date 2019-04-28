@@ -189,15 +189,6 @@ void freeNodes(Node** n) {
   }
 }
 
-// void freeSomething(Node* n) {
-//   while(n->next != NULL){
-//     Node *m;
-//     m = n->next;
-//     free(n);
-//     n = m;
-//   }
-//   free(n);
-// }
 
 int main() {
     // make a list of even numbers
