@@ -179,6 +179,26 @@ Node *make_something() {
 }
 
 
+void freeNodes(Node** n) {
+  Node* m = *n;
+
+  while(m != NULL){
+    Node *a = m;
+    m = m->next;
+    free(a);
+  }
+}
+
+// void freeSomething(Node* n) {
+//   while(n->next != NULL){
+//     Node *m;
+//     m = n->next;
+//     free(n);
+//     n = m;
+//   }
+//   free(n);
+// }
+
 int main() {
     // make a list of even numbers
     Node *test_list = make_node(2, NULL);
@@ -205,9 +225,13 @@ int main() {
     // add an element to the empty list
     insert_by_index(&empty, 1, 0);
     print_list(&empty);
+    freeNodes(&empty);
 
     Node *something = make_something();
-    free(something);
+    freeNodes(&something);
+    // free(something);
+
+    freeNodes(&test_list);
 
     return 0;
 }
